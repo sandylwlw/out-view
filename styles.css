@@ -87,6 +87,20 @@ h2 {
   cursor: pointer;
 }
 
+.file-label-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.file-label-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 .file-label input {
   position: absolute;
   inset: 0;
@@ -340,10 +354,42 @@ tbody tr.active {
     gap: 16px;
   }
 
+  .upload-card {
+    position: relative;
+    padding-top: 56px;
+  }
+
+  .file-label {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 999px;
+  }
+
+  .file-label-text {
+    display: none;
+  }
+
   .stats {
     grid-template-columns: 1fr;
     gap: 12px;
     margin: 20px 0;
+  }
+
+  .stat {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .stat-value {
+    font-size: 16px;
   }
 
   .viewer-header,

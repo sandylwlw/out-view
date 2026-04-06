@@ -25,7 +25,15 @@
         </div>
         <div class="upload-card">
           <label class="file-label" for="file-input">
-            <span>Choose .out file</span>
+            <span class="file-label-text">Choose .out file</span>
+            <span class="file-label-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path
+                  d="M12 4l4 4h-3v6h-2V8H8l4-4zm-6 14h12v2H6v-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
             <input id="file-input" type="file" accept=".out,.log,.txt" />
           </label>
           <p class="hint">Local parsing only. Nothing leaves your device.</p>
