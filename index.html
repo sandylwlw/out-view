@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gaussian Optimization Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Gaussian Output Explorer</p>
+          <h1>Structure Optimization Timeline</h1>
+          <p class="lead">
+            Load a Gaussian .out file to visualize every optimization step, inspect
+            energies, and scrub the 3D structure on desktop or iPhone.
+          </p>
+        </div>
+        <div class="upload-card">
+          <label class="file-label" for="file-input">
+            <span>Choose .out file</span>
+            <input id="file-input" type="file" accept=".out,.log,.txt" />
+          </label>
+          <p class="hint">Local parsing only. Nothing leaves your device.</p>
+          <div class="file-meta" id="file-meta">No file loaded</div>
+        </div>
+      </header>
+
+      <section class="stats" id="stats">
+        <div class="stat">
+          <div class="stat-label">Steps</div>
+          <div class="stat-value" id="stat-steps">-</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Atoms</div>
+          <div class="stat-value" id="stat-atoms">-</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Energy Range</div>
+          <div class="stat-value" id="stat-range">-</div>
+        </div>
+      </section>
+
+      <main class="content">
+        <section class="viewer-panel">
+          <div class="viewer-header">
+            <div>
+              <h2>3D Structure</h2>
+              <p class="sub">Rotate, zoom, and step through the optimization path.</p>
+            </div>
+            <div class="controls">
+              <button id="prev-btn" class="ghost">Prev</button>
+              <button id="play-btn" class="primary">Play</button>
+              <button id="next-btn" class="ghost">Next</button>
+            </div>
+          </div>
+          <div id="viewer" class="viewer"></div>
+          <div class="step-bar">
+            <input id="step-slider" type="range" min="0" max="0" value="0" />
+            <div class="step-meta">
+              <div id="step-label">Step 1</div>
+              <div id="energy-label">Energy: -</div>
+            </div>
+            <div class="step-actions">
+              <label class="speed">
+                Speed
+                <input id="speed" type="range" min="1" max="8" value="4" />
+              </label>
+              <button id="download-btn" class="ghost">Download XYZ</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="data-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Energy Trace</h2>
+              <p class="sub">Relative energies in kcal/mol (min = 0).</p>
+            </div>
+            <div class="toggle">
+              <button id="unit-hartree" class="pill active">Hartree</button>
+              <button id="unit-kcal" class="pill">kcal/mol</button>
+            </div>
+          </div>
+          <canvas id="energy-chart" width="600" height="260"></canvas>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Step</th>
+                  <th>Energy (Hartree)</th>
+                  <th>Delta (kcal/mol)</th>
+                </tr>
+              </thead>
+              <tbody id="energy-table"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
