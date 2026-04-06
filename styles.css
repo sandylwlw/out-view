@@ -73,6 +73,8 @@ h2 {
 }
 
 .file-label {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +88,12 @@ h2 {
 }
 
 .file-label input {
-  display: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 
 .hint {
@@ -329,8 +336,14 @@ tbody tr.active {
     font-size: 16px;
   }
 
+  .hero {
+    gap: 16px;
+  }
+
   .stats {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 20px 0;
   }
 
   .viewer-header,
@@ -339,13 +352,36 @@ tbody tr.active {
     align-items: flex-start;
   }
 
+  .viewer {
+    height: 60vh;
+    min-height: 320px;
+  }
+
   .controls {
     width: 100%;
     justify-content: space-between;
   }
 
+  .step-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .speed {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .speed input {
+    width: 160px;
+  }
+
   .step-meta {
     flex-direction: column;
     gap: 4px;
+  }
+
+  .table-wrap {
+    max-height: 240px;
   }
 }
