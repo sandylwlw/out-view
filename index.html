@@ -56,23 +56,26 @@
         </div>
       </section>
 
-      <section class="compare-toolbar">
-        <div class="sync-controls">
-          <label class="sync-toggle">
-            <input id="sync-toggle" type="checkbox" />
-            <span>Sync all viewers</span>
-          </label>
-          <div class="master-slider">
-            <input id="sync-slider" type="range" min="0" max="0" value="0" disabled />
-            <div class="step-meta">
-              <div id="sync-label">Master Step</div>
-              <div id="sync-step">-</div>
-            </div>
+      <section class="compare-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Optimized Energy Comparison</h2>
+            <p class="sub">Relative to the lowest energy across all files.</p>
           </div>
         </div>
-        <div class="toggle">
-          <button id="unit-hartree" class="pill active">Hartree</button>
-          <button id="unit-kcal" class="pill">kcal/mol</button>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Method</th>
+                <th>Basis</th>
+                <th>Min Δ (kcal/mol)</th>
+                <th>Steps</th>
+              </tr>
+            </thead>
+            <tbody id="compare-table"></tbody>
+          </table>
         </div>
       </section>
 

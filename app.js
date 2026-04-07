@@ -157,7 +157,6 @@ const state = {
   datasets: [],
   viewers: new Map(),
   unit: "hartree",
-  syncEnabled: false,
 };
 
 const fileInput = document.getElementById("file-input");
@@ -165,12 +164,8 @@ const fileMeta = document.getElementById("file-meta");
 const statFiles = document.getElementById("stat-files");
 const statSteps = document.getElementById("stat-steps");
 const statAtoms = document.getElementById("stat-atoms");
-const unitHartree = document.getElementById("unit-hartree");
-const unitKcal = document.getElementById("unit-kcal");
 const viewerGrid = document.getElementById("viewer-grid");
-const syncToggle = document.getElementById("sync-toggle");
-const syncSlider = document.getElementById("sync-slider");
-const syncStepLabel = document.getElementById("sync-step");
+const compareTable = document.getElementById("compare-table");
 
 function extractRoute(lines) {
   for (let i = 0; i < lines.length; i += 1) {
@@ -357,35 +352,36 @@ function updateStats() {
   statAtoms.textContent = maxAtoms ? maxAtoms.toString() : "-";
 }
 
-function updateUnitButtons(unit) {
-  state.unit = unit;
-  unitHartree.classList.toggle("active", unit === "hartree");
-  unitKcal.classList.toggle("active", unit === "kcal");
-  state.viewers.forEach((viewState, id) => {
-    const dataset = state.datasets.find((ds) => ds.id === id);
-    if (dataset) {
-      drawChart(viewState.chart, dataset, viewState.currentStep);
-    }
+function buildComparisonTable() {
+  if (!compareTable) return;
+  compareTable.innerHTML = "";
+  if (!state.datasets.length) return;
+
+  const minEnergyById = new Map();
+  state.datasets.forEach((ds) => {
+    const min = ds.energies.length ? Math.min(...ds.energies) : null;
+    minEnergyById.set(ds.id, min);
   });
-}
 
-function updateSyncControls() {
-  const maxSteps = state.datasets.reduce((max, ds) => Math.max(max, ds.steps.length), 0);
-  syncSlider.max = Math.max(maxSteps - 1, 0).toString();
-  syncSlider.disabled = !state.syncEnabled || maxSteps <= 1;
-  syncStepLabel.textContent = state.syncEnabled
-    ? `Step ${parseInt(syncSlider.value, 10) + 1}`
-    : "-";
-}
+  const bestMin = Math.min(
+    ...Array.from(minEnergyById.values()).filter((value) => value !== null)
+  );
 
-function applySyncStep(stepIndex) {
-  syncSlider.value = stepIndex.toString();
-  syncStepLabel.textContent = `Step ${stepIndex + 1}`;
-  state.viewers.forEach((viewState, id) => {
-    const dataset = state.datasets.find((ds) => ds.id === id);
-    if (!dataset) return;
-    const clamped = Math.min(stepIndex, dataset.steps.length - 1);
-    renderStep(dataset, viewState, clamped);
+  state.datasets.forEach((ds) => {
+    const minEnergy = minEnergyById.get(ds.id);
+    const delta = minEnergy !== null ? (minEnergy - bestMin) * 627.5095 : null;
+    const row = document.createElement("tr");
+    if (delta !== null && Math.abs(delta) < 1e-6) {
+      row.classList.add("best");
+    }
+    row.innerHTML = `
+      <td>${ds.name}</td>
+      <td>${ds.method}</td>
+      <td>${ds.basis}</td>
+      <td>${delta !== null ? delta.toFixed(3) : "-"}</td>
+      <td>${ds.steps.length}</td>
+    `;
+    compareTable.appendChild(row);
   });
 }
 
@@ -457,18 +453,13 @@ function createViewerCard(dataset) {
   };
 
   slider.addEventListener("input", () => {
-    if (state.syncEnabled) return;
     renderStep(dataset, viewState, parseInt(slider.value, 10));
   });
 
   chart.addEventListener("click", (event) => {
     const targetStep = chartClickToStep(dataset, chart, event);
     if (targetStep === null) return;
-    if (state.syncEnabled) {
-      applySyncStep(targetStep);
-    } else {
-      renderStep(dataset, viewState, targetStep);
-    }
+    renderStep(dataset, viewState, targetStep);
   });
 
   removeBtn.addEventListener("click", () => {
@@ -493,10 +484,7 @@ function removeDataset(id) {
   const card = viewerGrid.querySelector(`[data-id="${id}"]`);
   if (card) card.remove();
   updateStats();
-  updateSyncControls();
-  if (state.syncEnabled) {
-    applySyncStep(parseInt(syncSlider.value, 10) || 0);
-  }
+  buildComparisonTable();
 }
 
 function buildTable(dataset, viewState) {
@@ -511,11 +499,7 @@ function buildTable(dataset, viewState) {
       <td>${delta !== null ? delta.toFixed(3) : "-"}</td>
     `;
     row.addEventListener("click", () => {
-      if (state.syncEnabled) {
-        applySyncStep(index);
-      } else {
-        renderStep(dataset, viewState, index);
-      }
+      renderStep(dataset, viewState, index);
     });
     viewState.tableBody.appendChild(row);
     viewState.rows.push(row);
@@ -579,12 +563,7 @@ function drawChart(canvas, dataset, currentStep) {
   if (!dataset.energies.length) return;
 
   const padding = 28;
-  const values = dataset.energySeries.map((energy) => {
-    if (state.unit === "kcal") {
-      return (energy - dataset.minEnergy) * 627.5095;
-    }
-    return energy;
-  });
+  const values = dataset.energySeries.slice();
 
   const minVal = Math.min(...values);
   const maxVal = Math.max(...values);
@@ -662,31 +641,10 @@ async function handleFiles(files) {
   }
 
   updateStats();
-  updateSyncControls();
-  if (state.syncEnabled) {
-    applySyncStep(parseInt(syncSlider.value, 10) || 0);
-  }
-}
-
-function handleSyncToggle() {
-  state.syncEnabled = syncToggle.checked;
-  updateSyncControls();
-  if (state.syncEnabled && state.datasets.length) {
-    const firstId = state.datasets[0].id;
-    const viewState = state.viewers.get(firstId);
-    const step = viewState?.currentStep ?? 0;
-    applySyncStep(step);
-  }
+  buildComparisonTable();
 }
 
 fileInput.addEventListener("change", (event) => handleFiles(event.target.files));
-unitHartree.addEventListener("click", () => updateUnitButtons("hartree"));
-unitKcal.addEventListener("click", () => updateUnitButtons("kcal"));
-syncToggle.addEventListener("change", handleSyncToggle);
-syncSlider.addEventListener("input", () => {
-  if (!state.syncEnabled) return;
-  applySyncStep(parseInt(syncSlider.value, 10));
-});
 
 window.addEventListener("resize", () => {
   state.viewers.forEach((viewState, id) => {
@@ -697,4 +655,4 @@ window.addEventListener("resize", () => {
 });
 
 updateStats();
-updateUnitButtons("hartree");
+buildComparisonTable();
