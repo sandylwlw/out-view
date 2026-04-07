@@ -21,7 +21,7 @@ body {
 }
 
 .page {
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 32px 24px 60px;
 }
@@ -158,7 +158,7 @@ h2 {
 
 .viewer-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
 }
 
@@ -250,7 +250,7 @@ h2 {
 }
 
 .viewer-card .viewer {
-  height: 320px;
+  height: 350px;
   margin: 0;
 }
 
@@ -265,7 +265,7 @@ h2 {
 
 .chart-canvas {
   width: 100%;
-  height: 180px;
+  height: 210px;
   border-radius: 12px;
   border: 1px solid var(--line);
   background: #fffaf4;
@@ -454,18 +454,6 @@ tbody tr.active {
 
   .viewer {
     height: 420px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .viewer-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .viewer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
