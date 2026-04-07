@@ -25,7 +25,7 @@
         </div>
         <div class="upload-card">
           <label class="file-label" for="file-input">
-            <span class="file-label-text">Choose .out file</span>
+            <span class="file-label-text">Choose .out files</span>
             <span class="file-label-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" role="img" focusable="false">
                 <path
@@ -34,87 +34,54 @@
                 />
               </svg>
             </span>
-            <input id="file-input" type="file" accept=".out,.log,.txt" />
+            <input id="file-input" type="file" accept=".out,.log,.txt" multiple />
           </label>
-          <p class="hint">Local parsing only. Nothing leaves your device.</p>
-          <div class="file-meta" id="file-meta">No file loaded</div>
+          <p class="hint">Local parsing only. Compare multiple calculations.</p>
+          <div class="file-meta" id="file-meta">No files loaded</div>
         </div>
       </header>
 
       <section class="stats" id="stats">
         <div class="stat">
-          <div class="stat-label">Steps</div>
+          <div class="stat-label">Files</div>
+          <div class="stat-value" id="stat-files">-</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Max Steps</div>
           <div class="stat-value" id="stat-steps">-</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Atoms</div>
+          <div class="stat-label">Max Atoms</div>
           <div class="stat-value" id="stat-atoms">-</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Energy Range</div>
-          <div class="stat-value" id="stat-range">-</div>
         </div>
       </section>
 
-      <main class="content">
-        <section class="viewer-panel">
-          <div class="viewer-header">
-            <div>
-              <h2>3D Structure</h2>
-              <p class="sub">Rotate, zoom, and step through the optimization path.</p>
-            </div>
-            <div class="controls">
-              <button id="prev-btn" class="ghost">Prev</button>
-              <button id="play-btn" class="primary">Play</button>
-              <button id="next-btn" class="ghost">Next</button>
-            </div>
-          </div>
-          <div id="viewer" class="viewer"></div>
-          <div class="step-bar">
-            <input id="step-slider" type="range" min="0" max="0" value="0" />
+      <section class="compare-toolbar">
+        <div class="sync-controls">
+          <label class="sync-toggle">
+            <input id="sync-toggle" type="checkbox" />
+            <span>Sync all viewers</span>
+          </label>
+          <div class="master-slider">
+            <input id="sync-slider" type="range" min="0" max="0" value="0" disabled />
             <div class="step-meta">
-              <div id="step-label">Step 1</div>
-              <div id="energy-label">Energy: -</div>
-            </div>
-            <div class="step-actions">
-              <label class="speed">
-                Speed
-                <input id="speed" type="range" min="1" max="8" value="4" />
-              </label>
-              <button id="download-btn" class="ghost">Download XYZ</button>
+              <div id="sync-label">Master Step</div>
+              <div id="sync-step">-</div>
             </div>
           </div>
-        </section>
+        </div>
+        <div class="toggle">
+          <button id="unit-hartree" class="pill active">Hartree</button>
+          <button id="unit-kcal" class="pill">kcal/mol</button>
+        </div>
+      </section>
 
-        <section class="data-panel">
-          <div class="panel-header">
-            <div>
-              <h2>Energy Trace</h2>
-              <p class="sub">Relative energies in kcal/mol (min = 0).</p>
-            </div>
-            <div class="toggle">
-              <button id="unit-hartree" class="pill active">Hartree</button>
-              <button id="unit-kcal" class="pill">kcal/mol</button>
-            </div>
-          </div>
-          <canvas id="energy-chart" width="600" height="260"></canvas>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Step</th>
-                  <th>Energy (Hartree)</th>
-                  <th>Delta (kcal/mol)</th>
-                </tr>
-              </thead>
-              <tbody id="energy-table"></tbody>
-            </table>
-          </div>
-        </section>
+      <main>
+        <section id="viewer-grid" class="viewer-grid"></section>
       </main>
     </div>
 
     <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=1"></script>
   </body>
 </html>
